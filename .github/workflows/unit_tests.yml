@@ -18,11 +18,11 @@ jobs:
               run: |
                 sudo add-apt-repository ppa:snaipewastaken/ppa
                 sudo apt-get update
-                sudo apt-get install -y criterion-dev gcovr
+                sudo apt-get install criterion-dev gcovr
 
             - name: Build Unit Tests
               working-directory: tests
-              run: gcc tests.c -o tests_run -ldl -lcriterion -lgcov --coverage
+              run: gcc tests.c ../cstring.c -o tests_run -lcriterion -lgcov --coverage
 
             - name: Run Unit Tests
               working-directory: tests
