@@ -168,7 +168,6 @@ void string_push_back(string this, char insertion)
     if (this->data == NULL) {
         string_set(this, insertionstr);
         free(tmpstr);
-        free(insertionstr);
         return;
     }
     strcpy(tmpstr, this->data);
@@ -193,12 +192,11 @@ void string_reverse(string this)
         LOG("string_reverse", "Tried to reverse a NULL string (no changes)");
         return;
     }
-    int i;
+    size_t i;
     size_t size = strlen(this->data);
     size_t j = size - 1;
     char temp;
-
-    for (i = 0; i < size/2; i++, j--) {
+    for (i = 0; i < size / 2; i++, j--) {
         temp = this->data[i];
         this->data[i] = this->data[j];
         this->data[j] = temp;

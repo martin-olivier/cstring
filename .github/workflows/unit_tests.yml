@@ -22,7 +22,7 @@ jobs:
 
             - name: Build Unit Tests
               working-directory: tests
-              run: gcc tests.c ../cstring.c -o tests_run -lcriterion -lgcov --coverage
+              run: gcc -Wall -Wextra tests.c ../cstring.c -o tests_run -lcriterion -lgcov --coverage
 
             - name: Run Unit Tests
               working-directory: tests
