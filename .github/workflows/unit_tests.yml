@@ -16,6 +16,7 @@ jobs:
 
             - name: Install criterion and gcov
               run: |
+                sudo add-apt-repository ppa:snaipewastaken/ppa
                 sudo apt-get update
                 sudo apt-get install -y criterion-dev gcovr
 
