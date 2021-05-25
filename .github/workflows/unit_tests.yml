@@ -1,0 +1,32 @@
+name: Unit Tests
+
+on: [push]
+
+defaults:
+    run:
+        shell: bash
+
+jobs:
+    run_unit_tests:
+        name: Unit Tests
+        runs-on: ubuntu-latest
+
+        steps:
+            - uses: actions/checkout@v2
+
+            - name: Install criterion and gcov
+              run: |
+                sudo apt-get update
+                sudo apt-get install -y criterion-dev gcovr
+
+            - name: Build Unit Tests
+              working-directory: tests
+              run: gcc tests.c -o tests_run -ldl -lcriterion -lgcov --coverage
+
+            - name: Run Unit Tests
+              working-directory: tests
+              run: ./tests_run
+
+            - name: Send Coverage to codecov.io
+              working-directory: tests
+              run: bash <(curl -s https://codecov.io/bash)
