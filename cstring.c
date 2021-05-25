@@ -1,0 +1,311 @@
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <unistd.h>
+#include <stdbool.h>
+#include <fcntl.h>
+#include <sys/stat.h>
+
+#define RED   "\x1B[31m"
+#define YEL   "\x1B[33m"
+#define CYN   "\x1B[36m"
+#define RESET "\x1B[0m"
+
+#define CBOOST_DEBUG false
+
+#if CBOOST_DEBUG
+#define LOG(fn, txt) cstring_log(fn, txt)
+#else
+#define LOG(fn, txt)
+#endif
+
+void cstring_log(const char *function, const char *text)
+{
+    fprintf(stderr, YEL "[CSTRING WARNING]" RESET);
+    fprintf(stderr, " -> ");
+    fprintf(stderr, CYN "%s" RESET, function);
+    fprintf(stderr, " -> ");
+    fprintf(stderr, RED "%s\n" RESET, text);
+}
+
+void *cstring_alloc(size_t size)
+{
+    void *ptr = malloc(size);
+    if (!ptr) {
+        fprintf(stderr, "[CSTRING] Bad Alloc, Abort...");
+        exit(84);
+    }
+    return ptr;
+}
+
+typedef struct string_s
+{
+    char *data;
+} string_t;
+
+typedef string_t *string;
+
+void string_set(string dest, const char *src)
+{
+    if (src == NULL) {
+        if (dest->data != NULL)
+            free(dest->data);
+        dest->data = NULL;
+        return;
+    }
+    if (dest->data != NULL) {
+        free(dest->data);
+        dest->data = NULL;
+    }
+    dest->data = cstring_alloc(sizeof(char) * strlen(src) + 1);
+    strcpy(dest->data, src);
+}
+
+string string_create(const char *str)
+{
+    string this = cstring_alloc(sizeof(string_t));
+    this->data = NULL;
+    string_set(this, str);
+    return this;
+}
+
+void string_copy(string dest, const string src)
+{
+    string_set(dest, src->data);
+}
+
+string string_duplicate(const string this)
+{
+    return string_create(this->data);
+}
+
+void string_print(const string this)
+{
+    if (this->data == NULL) {
+        fputs("(null)", stdout);
+        return;
+    }
+    fputs(this->data, stdout);
+}
+
+void string_println(const string this)
+{
+    string_print(this);
+    fputs("\n", stdout);
+}
+
+void string_clear(string this)
+{
+    string_set(this, "");
+}
+
+const char *string_data(const string this)
+{
+    return this->data;
+}
+
+const char *string_c_str(const string this)
+{
+    return this->data;
+}
+
+size_t string_size(const string this)
+{
+    if (this->data == NULL) {
+        LOG("string_size", "Tried to get the length of a NULL string (returned 0)");
+        return 0;
+    }
+    return strlen(this->data);
+}
+
+size_t string_length(const string this)
+{
+    if (this->data == NULL) {
+        LOG("string_length", "Tried to get the length of a NULL string (returned 0)");
+        return 0;
+    }
+    return strlen(this->data);
+}
+
+int string_compare_c_str(const string this, const char *other)
+{
+    if (this->data == NULL && other == NULL) {
+        LOG("string_compare, string_compare_c_str", "Tried to compare two strings with NULL content (returned 0)");
+        return 0;
+    }
+    if (this->data == NULL || other == NULL) {
+        LOG("string_compare, string_compare_c_str", "Tried to compare a standard string with a NULL string (returned -1)");
+        return -1;
+    }
+    return strcmp(this->data, other);
+}
+
+int string_compare(const string this, const string other)
+{
+    return string_compare_c_str(this, other->data);
+}
+
+char string_at(const string this, size_t pos)
+{
+    if (this->data == NULL) {
+        LOG("string_at", "Tried to reach the text on a NULL string (returned 0)");
+        return 0;
+    }
+    if (pos >= string_length(this)) {
+        LOG("string_at", "Tried to reach a position out of bounds (returned 0)");
+        return 0;
+    }
+    return this->data[pos];
+}
+
+void string_push_back(string this, char insertion)
+{
+    char *tmpstr = cstring_alloc(sizeof(char) * (string_length(this) + 2));
+    char insertionstr[2];
+    insertionstr[0] = insertion;
+    insertionstr[1] = '\0';
+
+    if (this->data == NULL) {
+        string_set(this, insertionstr);
+        free(tmpstr);
+        free(insertionstr);
+        return;
+    }
+    strcpy(tmpstr, this->data);
+    strcat(tmpstr, insertionstr);
+    string_set(this, tmpstr);
+    free(tmpstr);
+}
+
+void string_pop_back(string this)
+{
+    size_t len = string_length(this);
+    if (len == 0) {
+        LOG("string_pop_back", "Tried to pop back an empty string (no changes)");
+        return;
+    }
+    this->data[len - 1] = '\0';
+}
+
+void string_reverse(string this)
+{
+    if (this->data == NULL) {
+        LOG("string_reverse", "Tried to reverse a NULL string (no changes)");
+        return;
+    }
+    int i;
+    size_t size = strlen(this->data);
+    size_t j = size - 1;
+    char temp;
+
+    for (i = 0; i < size/2; i++, j--) {
+        temp = this->data[i];
+        this->data[i] = this->data[j];
+        this->data[j] = temp;
+    }
+    this->data[size] = '\0';
+}
+
+void string_swap(string this, string other)
+{
+    char *tmp = cstring_alloc(sizeof(char) * string_length(this) + 1);
+    strcpy(tmp, this->data);
+
+    string_set(this, other->data);
+    string_set(other, tmp);
+
+    free(tmp);
+}
+
+void string_cat(string this, const char *new_str)
+{
+    if (new_str == NULL) {
+        LOG("string_cat, string_append", "Tried to concatenate a string with a NULL string (no changes)");
+        return;
+    }
+    char *tmp = cstring_alloc(sizeof(char) * (string_length(this) + strlen(new_str) + 1));
+
+    if (this->data == NULL) {
+        string_set(this, "");
+        LOG("string_cat, string_append", "Tried to concatenate a NULL string with another string (this became newstr)");
+    }
+    strcpy(tmp, this->data);
+    strcat(tmp, new_str);
+    string_set(this, tmp);
+    free(tmp);
+}
+
+void string_append(string this, const string new_string)
+{
+    string_cat(this, new_string->data);
+}
+
+int string_file_get(string this, const char *path)
+{
+    int fd;
+    struct stat buf;
+    int size;
+    char *str;
+
+    fd = open(path, O_RDONLY);
+    if (fd < 0) {
+        string_set(this, NULL);
+        return -1;
+    }
+    stat(path, &buf);
+    size = buf.st_size;
+    str = cstring_alloc(sizeof(char) * (size + 1));
+    read(fd, str, size);
+    str[size] = '\0';
+    close(fd);
+    string_set(this, str);
+    free(str);
+    return 0;
+}
+
+int string_file_write(const string this, const char *path)
+{
+    if (this->data == NULL) {
+        LOG("string_file_write", "Tried to write a NULL string to a file (returned -1)");
+        return -1;
+    }
+    int fd = open(path, O_WRONLY | O_CREAT, 0666);
+    if (fd < 0)
+        return -1;
+    write(fd, this->data, string_length(this));
+    close(fd);
+    return 0;
+}
+
+int string_getline(string this)
+{
+    char buf = 0;
+    string_clear(this);
+
+    while (true) {
+        buf = getchar();
+        if (buf == -1)
+            return -1;
+        if (buf == '\n')
+            break;
+        string_push_back(this, buf);
+    }
+    return 0;
+}
+
+bool string_empty(const string this)
+{
+    if (this->data == NULL)
+        return true;
+    if (string_compare_c_str(this, "") == 0)
+        return true;
+    return false;
+}
+
+void string_destroy(string this)
+{
+    if (this->data != NULL)
+        free(this->data);
+    free(this);
+    this = NULL;
+}

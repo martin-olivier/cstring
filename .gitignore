@@ -1,0 +1,11 @@
+# Editor files and folders
+
+.idea/
+.vscode/
+*~
+\#*#
+.DS_Store
+
+# Files
+
+*.o
