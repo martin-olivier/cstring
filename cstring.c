@@ -11,9 +11,9 @@
 #define CYN   "\x1B[36m"
 #define RESET "\x1B[0m"
 
-#define CBOOST_DEBUG false
+#define CSTRING_DEBUG false
 
-#if CBOOST_DEBUG
+#if CSTRING_DEBUG
 #define LOG(fn, txt) cstring_log(fn, txt)
 #else
 #define LOG(fn, txt)
