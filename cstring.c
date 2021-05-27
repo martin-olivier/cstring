@@ -6,15 +6,14 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 
-#define RED   "\x1B[31m"
-#define YEL   "\x1B[33m"
-#define CYN   "\x1B[36m"
-#define RESET "\x1B[0m"
-
 #define CSTRING_DEBUG false
 
 #if CSTRING_DEBUG
 #define LOG(fn, txt) cstring_log(fn, txt)
+#define RED   "\x1B[31m"
+#define YEL   "\x1B[33m"
+#define CYN   "\x1B[36m"
+#define RESET "\x1B[0m"
 void cstring_log(const char *function, const char *text)
 {
     fprintf(stderr, YEL "[CSTRING WARNING]" RESET);
