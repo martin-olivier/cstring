@@ -315,7 +315,7 @@ size_t string_find_c_str(const string this, const char *to_find)
     char *res = strstr(this->data, to_find);
     if (!res)
         return npos;
-    return to_find - this->data;
+    return res - this->data;
 }
 
 size_t string_find(const string this, const string to_find)
@@ -343,7 +343,7 @@ size_t string_rfind_c_str(const string this, const char *to_find)
     char *res = cstring_strrstr(this->data, to_find);
     if (!res)
         return npos;
-    return to_find - this->data;
+    return res - this->data;
 }
 
 size_t string_rfind(const string this, const string to_find)

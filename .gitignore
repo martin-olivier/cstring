@@ -9,3 +9,6 @@
 # Files
 
 *.o
+*.gcda
+*.gcno
+tests_run

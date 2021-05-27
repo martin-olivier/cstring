@@ -18,6 +18,7 @@ Test(string_find_test, basic)
     string str = string_create("hello world!");
     string other = string_create("hello");
     size_t res = string_find(str, other);
+    printf("%zu\n", res);
     cr_assert_eq(res, 0);
     string_destroy(str);
     string_destroy(other);
