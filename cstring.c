@@ -15,10 +15,6 @@
 
 #if CSTRING_DEBUG
 #define LOG(fn, txt) cstring_log(fn, txt)
-#else
-#define LOG(fn, txt)
-#endif
-
 void cstring_log(const char *function, const char *text)
 {
     fprintf(stderr, YEL "[CSTRING WARNING]" RESET);
@@ -27,6 +23,9 @@ void cstring_log(const char *function, const char *text)
     fprintf(stderr, " -> ");
     fprintf(stderr, RED "%s\n" RESET, text);
 }
+#else
+#define LOG(fn, txt)
+#endif
 
 void *cstring_alloc(size_t size)
 {
@@ -122,11 +121,7 @@ size_t string_size(const string this)
 
 size_t string_length(const string this)
 {
-    if (this->data == NULL) {
-        LOG("string_length", "Tried to get the length of a NULL string (returned 0)");
-        return 0;
-    }
-    return strlen(this->data);
+    return string_size(this);
 }
 
 int string_compare_c_str(const string this, const char *other)
@@ -217,27 +212,26 @@ void string_swap(string this, string other)
     free(tmp);
 }
 
-void string_cat(string this, const char *new_str)
+void string_cat(string this, const char *other)
 {
-    if (new_str == NULL) {
+    if (other == NULL) {
         LOG("string_cat, string_append", "Tried to concatenate a string with a NULL string (no changes)");
         return;
     }
-    char *tmp = cstring_alloc(sizeof(char) * (string_length(this) + strlen(new_str) + 1));
-
+    char *tmp = cstring_alloc(sizeof(char) * (string_length(this) + strlen(other) + 1));
     if (this->data == NULL) {
         string_set(this, "");
-        LOG("string_cat, string_append", "Tried to concatenate a NULL string with another string (this became newstr)");
+        LOG("string_cat, string_append", "Tried to concatenate a NULL string with another string (this became other)");
     }
     strcpy(tmp, this->data);
-    strcat(tmp, new_str);
+    strcat(tmp, other);
     string_set(this, tmp);
     free(tmp);
 }
 
-void string_append(string this, const string new_string)
+void string_append(string this, const string other)
 {
-    string_cat(this, new_string->data);
+    string_cat(this, other->data);
 }
 
 int string_file_get(string this, const char *path)

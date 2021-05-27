@@ -3,6 +3,8 @@
 #include <stdbool.h>
 #include <stddef.h>
 
+static const size_t npos = -1;
+
 typedef struct string_t *string;
 
 /**
