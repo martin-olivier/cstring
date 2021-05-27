@@ -184,6 +184,7 @@ Test(cstring, string_rfind_test)
     string str = string_create("abcababcd");
     string other = string_create("ab");
     cr_assert_eq(string_rfind(str, other), 5);
+    cr_assert_eq(string_rfind_c_str(str, ""), 9);
     cr_assert_eq(string_rfind_c_str(str, "c"), 7);
     cr_assert_eq(string_rfind_c_str(str, "abca"), 0);
     cr_assert_eq(string_rfind_c_str(str, "zabca"), npos);
