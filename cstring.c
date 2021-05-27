@@ -320,12 +320,27 @@ size_t string_find_c_str(const string this, const char *to_find)
 
 size_t string_find(const string this, const string to_find)
 {
-    string_find_c_str(this, to_find->data);
+    return string_find_c_str(this, to_find->data);
+}
+
+char* cstring_strrstr(const char *haystack, const char *needle)
+{
+	char *r = NULL;
+
+	if (!needle[0])
+		return (char*)haystack + strlen(haystack);
+	while (1) {
+		char *p = strstr(haystack, needle);
+		if (!p)
+			return r;
+		r = p;
+		haystack = p + 1;
+	}
 }
 
 size_t string_rfind_c_str(const string this, const char *to_find)
 {
-    char *res = strrstr(this->data, to_find);
+    char *res = cstring_strrstr(this->data, to_find);
     if (!res)
         return npos;
     return to_find - this->data;
@@ -333,7 +348,7 @@ size_t string_rfind_c_str(const string this, const char *to_find)
 
 size_t string_rfind(const string this, const string to_find)
 {
-    string_rfind_c_str(this, to_find->data);
+    return string_rfind_c_str(this, to_find->data);
 }
 
 string string_substr(const string this, size_t pos, size_t len)
