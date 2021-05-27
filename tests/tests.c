@@ -54,10 +54,11 @@ Test(cstring, string_print_test)
     string other = string_create(NULL);
     freopen("test_print.txt", "w", stdout);
     string_println(str);
+    string_println(other);
     fclose(stdout);
     if (string_file_get(other, "test_print.txt") == -1)
         cr_assert_eq(true, false);
-    cr_assert_str_eq(string_data(other), "content\n");
+    cr_assert_str_eq(string_data(other), "content\n(null)\n");
     string_destroy(str);
     string_destroy(other);
 }
