@@ -48,13 +48,19 @@ Test(cstring, string_duplicate_test)
     string_destroy(newstr);
 }
 
-/*Test(cstring, string_print_println_test, .init=cr_redirect_stdout)
+Test(cstring, string_print_test)
 {
     string str = string_create("content");
+    string other = string_create(NULL);
+    freopen("test_print.txt", "w", stdout);
     string_println(str);
-    cr_assert_stdout_eq_str("content\n");
+    fclose(stdout);
+    if (string_file_get(other, "test_print.txt") == -1)
+        cr_assert_eq(true, false);
+    cr_assert_str_eq(string_data(other), "content\n");
     string_destroy(str);
-}*/
+    string_destroy(other);
+}
 
 Test(cstring, string_clear_test)
 {
@@ -150,10 +156,28 @@ Test(cstring, string_swap_test)
 Test(cstring, string_cat_append_test)
 {
     string str = string_create(NULL);
+    string other = string_create("def");
     string_cat(str, "abc");
     string_cat(str, NULL);
-    string_cat(str, "def");
+    string_append(str, other);
     cr_assert_str_eq(string_data(str), "abcdef");
+    string_destroy(str);
+    string_destroy(other);
+}
+
+Test(cstring, string_file_test)
+{
+    string str = string_create("content");
+    if (string_file_get(str, "bad.txt") != -1)
+        cr_assert_eq(true, false);
+    if (string_file_write(str, "test_file.txt") != -1)
+        cr_assert_eq(true, false);
+    string_set(str, "content");
+    if (string_file_write(str, "test_file.txt") == -1)
+        cr_assert_eq(true, false);
+    if (string_file_get(str, "test_file.txt") == -1)
+        cr_assert_eq(true, false);
+    cr_assert_str_eq(string_data(str), "content");
     string_destroy(str);
 }
 
