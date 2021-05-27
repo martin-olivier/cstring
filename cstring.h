@@ -122,3 +122,34 @@ int string_getline(string this);
  *  @returns true if the string is empty / false otherwise.
  */
 bool string_empty(const string this);
+/**
+ *  Searches the string for the first occurrence of the sequence specified by its arguments.
+ *  @param to_find A c_string with the subject to search for.
+ *  @returns The position of the first character of the first match.
+ */
+size_t string_find_c_str(const string this, const char *to_find);
+/**
+ *  Searches the string for the first occurrence of the sequence specified by its arguments.
+ *  @param to_find Another string with the subject to search for.
+ *  @returns The position of the first character of the first match.
+ */
+size_t string_find(const string this, const string to_find);
+/**
+ *  Searches the string for the last occurrence of the sequence specified by its arguments.
+ *  @param to_find A c_string with the subject to search for.
+ *  @returns The position of the first character of the last match.
+ */
+size_t string_rfind_c_str(const string this, const char *to_find);
+/**
+ *  Searches the string for the last occurrence of the sequence specified by its arguments.
+ *  @param to_find Another string with the subject to search for.
+ *  @returns The position of the first character of the last match.
+ */
+size_t string_rfind(const string this, const string to_find);
+/**
+ *  Returns a newly constructed string object with its value initialized to a copy of a substring of this object
+ *  @param pos Position of the first character to be copied as a substring
+ *  @param len Number of characters to include in the substring (npos indicates all characters until the end of the string)
+ *  @returns A string object with a substring of this object
+ */
+string string_substr(const string this, size_t pos, size_t len);

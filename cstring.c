@@ -38,6 +38,8 @@ void *cstring_alloc(size_t size)
     return ptr;
 }
 
+static const size_t npos = -1;
+
 typedef struct string_s
 {
     char *data;
@@ -306,4 +308,38 @@ void string_destroy(string this)
         free(this->data);
     free(this);
     this = NULL;
+}
+
+size_t string_find_c_str(const string this, const char *to_find)
+{
+    char *res = strstr(this->data, to_find);
+    if (!res)
+        return npos;
+    return to_find - this->data;
+}
+
+size_t string_find(const string this, const string to_find)
+{
+    string_find_c_str(this, to_find->data);
+}
+
+size_t string_rfind_c_str(const string this, const char *to_find)
+{
+    char *res = strrstr(this->data, to_find);
+    if (!res)
+        return npos;
+    return to_find - this->data;
+}
+
+size_t string_rfind(const string this, const string to_find)
+{
+    string_rfind_c_str(this, to_find->data);
+}
+
+string string_substr(const string this, size_t pos, size_t len)
+{
+    string tmp = string_create("");
+    for (size_t i = 0; pos < string_size(this) && i < len; i++, pos++)
+        string_push_back(tmp, string_at(this, pos));
+    return tmp;
 }

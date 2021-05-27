@@ -12,3 +12,13 @@ Test(cstring, basic)
     cr_assert_str_eq(string_data(i), "hello world!");
     string_destroy(i);
 }
+
+Test(string_find_test, basic)
+{
+    string str = string_create("hello world!");
+    string other = string_create("hello");
+    size_t res = string_find(str, other);
+    cr_assert_eq(res, 0);
+    string_destroy(str);
+    string_destroy(other);
+}
