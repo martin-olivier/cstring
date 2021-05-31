@@ -156,20 +156,18 @@ char string_at(const string this, size_t pos)
 
 void string_push_back(string this, char insertion)
 {
-    char *tmpstr = cstring_alloc(sizeof(char) * (string_length(this) + 2));
-    char insertionstr[2];
-    insertionstr[0] = insertion;
-    insertionstr[1] = '\0';
+    char insertion_str[2];
+    insertion_str[0] = insertion;
+    insertion_str[1] = '\0';
 
-    if (this->data == NULL) {
-        string_set(this, insertionstr);
-        free(tmpstr);
-        return;
-    }
-    strcpy(tmpstr, this->data);
-    strcat(tmpstr, insertionstr);
-    string_set(this, tmpstr);
-    free(tmpstr);
+    if (this->data == NULL)
+        return string_set(this, insertion_str);
+
+    char *tmp = cstring_alloc(sizeof(char) * (string_length(this) + 2));
+    strcpy(tmp, this->data);
+    strcat(tmp, insertion_str);
+    string_set(this, tmp);
+    free(tmp);
 }
 
 void string_pop_back(string this)
