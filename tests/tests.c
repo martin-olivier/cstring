@@ -12,12 +12,12 @@ Test(cstring, hello_world_test)
     string_destroy(str);
 }
 
-Test(cstring, string_set_test)
+Test(cstring, string_assign_test)
 {
     string str = string_create("");
-    string_set(str, NULL);
+    string_assign(str, NULL);
     cr_assert_eq(string_data(str), NULL);
-    string_set(str, "test_string");
+    string_assign(str, "test_string");
     cr_assert_str_eq(string_data(str), "test_string");
     string_destroy(str);
 }
@@ -61,7 +61,7 @@ Test(cstring, string_clear_test)
     string str = string_create(NULL);
     string_clear(str);
     cr_assert_str_eq(string_data(str), "");
-    string_set(str, "fill");
+    string_assign(str, "fill");
     string_clear(str);
     cr_assert_str_eq(string_c_str(str), "");
     string_destroy(str);
@@ -71,9 +71,9 @@ Test(cstring, string_size_test)
 {
     string str = string_create(NULL);
     cr_assert_eq(string_size(str), 0);
-    string_set(str, "");
+    string_assign(str, "");
     cr_assert_eq(string_length(str), 0);
-    string_set(str, "abcdef");
+    string_assign(str, "abcdef");
     cr_assert_eq(string_size(str), 6);
     string_destroy(str);
 }
@@ -83,7 +83,7 @@ Test(cstring, string_cmp_test)
     string str = string_create(NULL);
     cr_assert_eq(string_compare_c_str(str, NULL), 0);
     cr_assert_eq(string_compare_c_str(str, "abc"), -1);
-    string_set(str, "abc");
+    string_assign(str, "abc");
     string other = string_create("def");
     cr_assert_neq(string_compare(str, other), 0);
     string_destroy(str);
@@ -94,7 +94,7 @@ Test(cstring, string_at_test)
 {
     string str = string_create(NULL);
     cr_assert_eq(string_at(str, 2), 0);
-    string_set(str, "abc");
+    string_assign(str, "abc");
     cr_assert_eq(string_at(str, 20), 0);
     cr_assert_eq(string_at(str, 2), 'c');
     string_destroy(str);
@@ -128,10 +128,10 @@ Test(cstring, string_reverse_test)
     string str = string_create(NULL);
     string_reverse(str);
     cr_assert_eq(string_data(str), 0);
-    string_set(str, "abc");
+    string_assign(str, "abc");
     string_reverse(str);
     cr_assert_str_eq(string_data(str), "cba");
-    string_set(str, "abcd");
+    string_assign(str, "abcd");
     string_reverse(str);
     cr_assert_str_eq(string_data(str), "dcba");
     string_destroy(str);
@@ -166,7 +166,7 @@ Test(cstring, string_file_test)
         cr_assert_eq(true, false);
     if (string_file_write(str, "test_file.txt") != -1)
         cr_assert_eq(true, false);
-    string_set(str, "content");
+    string_assign(str, "content");
     if (string_file_write(str, "test_file.txt") == -1)
         cr_assert_eq(true, false);
     if (string_file_get(str, "test_file.txt") == -1)
@@ -179,9 +179,9 @@ Test(cstring, string_empty_test)
 {
     string str = string_create(NULL);
     cr_assert_eq(string_empty(str), true);
-    string_set(str, "");
+    string_assign(str, "");
     cr_assert_eq(string_empty(str), true);
-    string_set(str, "a");
+    string_assign(str, "a");
     cr_assert_eq(string_empty(str), false);
     string_destroy(str);
 }
