@@ -45,7 +45,7 @@ typedef struct string_s
 
 typedef string_t *string;
 
-void string_set(string dest, const char *src)
+void string_assign(string dest, const char *src)
 {
     if (src == NULL) {
         if (dest->data != NULL)
@@ -65,13 +65,13 @@ string string_create(const char *str)
 {
     string this = cstring_alloc(sizeof(string_t));
     this->data = NULL;
-    string_set(this, str);
+    string_assign(this, str);
     return this;
 }
 
 void string_copy(string dest, const string src)
 {
-    string_set(dest, src->data);
+    string_assign(dest, src->data);
 }
 
 string string_duplicate(const string this)
@@ -96,7 +96,7 @@ void string_println(const string this)
 
 void string_clear(string this)
 {
-    string_set(this, "");
+    string_assign(this, "");
 }
 
 const char *string_data(const string this)
@@ -112,7 +112,7 @@ const char *string_c_str(const string this)
 size_t string_size(const string this)
 {
     if (this->data == NULL) {
-        LOG("string_size", "Tried to get the length of a NULL string (returned 0)");
+        LOG("string_size", "Tried to get the size of a NULL string (returned 0)");
         return 0;
     }
     return strlen(this->data);
@@ -120,7 +120,11 @@ size_t string_size(const string this)
 
 size_t string_length(const string this)
 {
-    return string_size(this);
+    if (this->data == NULL) {
+        LOG("string_length", "Tried to get the length of a NULL string (returned 0)");
+        return 0;
+    }
+    return strlen(this->data);
 }
 
 int string_compare_c_str(const string this, const char *other)
@@ -161,12 +165,12 @@ void string_push_back(string this, char insertion)
     insertion_str[1] = '\0';
 
     if (this->data == NULL)
-        return string_set(this, insertion_str);
+        return string_assign(this, insertion_str);
 
     char *tmp = cstring_alloc(sizeof(char) * (string_length(this) + 2));
     strcpy(tmp, this->data);
     strcat(tmp, insertion_str);
-    string_set(this, tmp);
+    string_assign(this, tmp);
     free(tmp);
 }
 
@@ -203,8 +207,8 @@ void string_swap(string this, string other)
     char *tmp = cstring_alloc(sizeof(char) * string_length(this) + 1);
     strcpy(tmp, this->data);
 
-    string_set(this, other->data);
-    string_set(other, tmp);
+    string_assign(this, other->data);
+    string_assign(other, tmp);
 
     free(tmp);
 }
@@ -217,12 +221,12 @@ void string_cat(string this, const char *other)
     }
     char *tmp = cstring_alloc(sizeof(char) * (string_length(this) + strlen(other) + 1));
     if (this->data == NULL) {
-        string_set(this, "");
+        string_assign(this, "");
         LOG("string_cat, string_append", "Tried to concatenate a NULL string with another string (this became other)");
     }
     strcpy(tmp, this->data);
     strcat(tmp, other);
-    string_set(this, tmp);
+    string_assign(this, tmp);
     free(tmp);
 }
 
@@ -240,7 +244,7 @@ int string_file_get(string this, const char *path)
 
     fd = open(path, O_RDONLY);
     if (fd < 0) {
-        string_set(this, NULL);
+        string_assign(this, NULL);
         return -1;
     }
     stat(path, &buf);
@@ -249,7 +253,7 @@ int string_file_get(string this, const char *path)
     read(fd, str, size);
     str[size] = '\0';
     close(fd);
-    string_set(this, str);
+    string_assign(this, str);
     free(str);
     return 0;
 }

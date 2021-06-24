@@ -10,7 +10,7 @@ typedef struct string_t *string;
 /**
  *  Change the value of a <string> object from a <char *>
  */
-void string_set(string dest, const char *src);
+void string_assign(string dest, const char *src);
 /**
  *  Change the value of a <string> object from another <string> object
  */
