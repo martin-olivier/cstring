@@ -8,7 +8,7 @@ defaults:
 
 jobs:
     run_unit_tests:
-        name: Unit Tests
+        name: ubuntu CI
         runs-on: ubuntu-18.04
 
         steps:
